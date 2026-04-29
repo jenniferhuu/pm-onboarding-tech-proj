@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useCallback } from "react";
 
-const API_URL = process.env.REACT_APP_API_URL || "http://localhost:3001";
+const API_URL = "/api/inventory";
 const LOW_STOCK_THRESHOLD = 3;
 
 const categoryClass = {
@@ -34,9 +34,9 @@ function MetricCard({ label, value, sub }) {
 }
 
 function AddItemForm({ onAdd }) {
-  const [form, setForm] = useState({ name: "", category: "Hardware", quantity: "", status: "Available" });
+  const [form, setForm]       = useState({ name: "", category: "Hardware", quantity: "", status: "Available" });
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState("");
+  const [error, setError]     = useState("");
 
   function handleChange(e) {
     setForm((prev) => ({ ...prev, [e.target.name]: e.target.value }));
@@ -44,9 +44,8 @@ function AddItemForm({ onAdd }) {
 
   async function handleSubmit(e) {
     e.preventDefault();
-    if (!form.name.trim()) { setError("Name is required."); return; }
+    if (!form.name.trim())                              { setError("Name is required.");          return; }
     if (form.quantity === "" || Number(form.quantity) < 0) { setError("Enter a valid quantity."); return; }
-
     setError("");
     setLoading(true);
     try {
@@ -61,23 +60,14 @@ function AddItemForm({ onAdd }) {
 
   return (
     <div className="card">
-      <div className="card-header">
-        <h2>Add inventory item</h2>
-      </div>
+      <div className="card-header"><h2>Add inventory item</h2></div>
       <div className="card-body">
         {error && <div className="error-banner">{error}</div>}
         <form onSubmit={handleSubmit}>
           <div className="form-grid">
             <div className="field">
               <label htmlFor="name">Name</label>
-              <input
-                id="name"
-                name="name"
-                type="text"
-                value={form.name}
-                onChange={handleChange}
-                placeholder="e.g. Arduino Kit"
-              />
+              <input id="name" name="name" type="text" value={form.name} onChange={handleChange} placeholder="e.g. Arduino Kit" />
             </div>
             <div className="field">
               <label htmlFor="category">Category</label>
@@ -90,15 +80,7 @@ function AddItemForm({ onAdd }) {
             </div>
             <div className="field">
               <label htmlFor="quantity">Quantity</label>
-              <input
-                id="quantity"
-                name="quantity"
-                type="number"
-                min="0"
-                value={form.quantity}
-                onChange={handleChange}
-                placeholder="0"
-              />
+              <input id="quantity" name="quantity" type="number" min="0" value={form.quantity} onChange={handleChange} placeholder="0" />
             </div>
             <div className="field">
               <label htmlFor="status">Status</label>
@@ -118,13 +100,11 @@ function AddItemForm({ onAdd }) {
 }
 
 function InventoryTable({ items, onDelete }) {
-  const [filterCat, setFilterCat]       = useState("");
+  const [filterCat,    setFilterCat]    = useState("");
   const [filterStatus, setFilterStatus] = useState("");
 
   const filtered = items.filter(
-    (i) =>
-      (!filterCat    || i.category === filterCat) &&
-      (!filterStatus || i.status   === filterStatus)
+    (i) => (!filterCat || i.category === filterCat) && (!filterStatus || i.status === filterStatus)
   );
 
   return (
@@ -134,36 +114,22 @@ function InventoryTable({ items, onDelete }) {
         <div className="filters">
           <select value={filterCat} onChange={(e) => setFilterCat(e.target.value)}>
             <option value="">All categories</option>
-            <option>Hardware</option>
-            <option>Software</option>
-            <option>Equipment</option>
-            <option>Consumable</option>
+            <option>Hardware</option><option>Software</option><option>Equipment</option><option>Consumable</option>
           </select>
           <select value={filterStatus} onChange={(e) => setFilterStatus(e.target.value)}>
             <option value="">All statuses</option>
-            <option>Available</option>
-            <option>Unavailable</option>
+            <option>Available</option><option>Unavailable</option>
           </select>
         </div>
       </div>
-
       <div className="table-scroll">
         <table>
           <thead>
-            <tr>
-              <th>#</th>
-              <th>Name</th>
-              <th>Category</th>
-              <th>Qty</th>
-              <th>Status</th>
-              <th></th>
-            </tr>
+            <tr><th>#</th><th>Name</th><th>Category</th><th>Qty</th><th>Status</th><th></th></tr>
           </thead>
           <tbody>
             {filtered.length === 0 ? (
-              <tr>
-                <td colSpan="6" className="empty">No items match your filters.</td>
-              </tr>
+              <tr><td colSpan="6" className="empty">No items match your filters.</td></tr>
             ) : (
               filtered.map((item, idx) => {
                 const [label, badgeClass] = getStatusBadge(item);
@@ -171,15 +137,9 @@ function InventoryTable({ items, onDelete }) {
                   <tr key={item.id}>
                     <td style={{ color: "#aaa", fontSize: 12 }}>{idx + 1}</td>
                     <td style={{ fontWeight: 500 }}>{item.name}</td>
-                    <td>
-                      <span className={`badge ${categoryClass[item.category] || ""}`}>
-                        {item.category}
-                      </span>
-                    </td>
+                    <td><span className={`badge ${categoryClass[item.category] || ""}`}>{item.category}</span></td>
                     <td>{item.quantity}</td>
-                    <td>
-                      <span className={`badge ${badgeClass}`}>{label}</span>
-                    </td>
+                    <td><span className={`badge ${badgeClass}`}>{label}</span></td>
                     <td>
                       <button
                         className="btn btn-danger"
@@ -205,28 +165,19 @@ function CategoryChart({ items }) {
     acc[item.category] = (acc[item.category] || 0) + 1;
     return acc;
   }, {});
-
   const sorted = Object.entries(counts).sort((a, b) => b[1] - a[1]);
   const max = sorted.length ? sorted[0][1] : 1;
 
   return (
     <div className="card">
-      <div className="card-header">
-        <h2>Items by category</h2>
-      </div>
+      <div className="card-header"><h2>Items by category</h2></div>
       <div className="card-body">
         <div className="bar-rows">
           {sorted.map(([cat, count]) => (
             <div className="bar-row" key={cat}>
               <div className="bar-label">{cat}</div>
               <div className="bar-track">
-                <div
-                  className="bar-fill"
-                  style={{
-                    width: `${Math.round((count / max) * 100)}%`,
-                    background: categoryColor[cat] || "#888",
-                  }}
-                />
+                <div className="bar-fill" style={{ width: `${Math.round((count / max) * 100)}%`, background: categoryColor[cat] || "#888" }} />
               </div>
               <div className="bar-count">{count}</div>
             </div>
@@ -241,42 +192,37 @@ export default function App() {
   const [inventory, setInventory] = useState([]);
   const [loading,   setLoading]   = useState(true);
   const [error,     setError]     = useState("");
+
   const fetchInventory = useCallback(async () => {
     try {
-      const res = await fetch(`${API_URL}/inventory`);
+      const res = await fetch(API_URL);
       if (!res.ok) throw new Error("Server error");
-      const data = await res.json();
-      setInventory(data);
+      setInventory(await res.json());
       setError("");
     } catch {
-      setError("Could not connect to the backend. Make sure the server is running on port 3001.");
+      setError("Could not load inventory. If running locally, make sure the dev server is running.");
     } finally {
       setLoading(false);
     }
   }, []);
 
-  useEffect(() => {
-    fetchInventory();
-  }, [fetchInventory]);
+  useEffect(() => { fetchInventory(); }, [fetchInventory]);
 
   async function handleAdd(item) {
-    const res = await fetch(`${API_URL}/inventory`, {
+    const res = await fetch(API_URL, {
       method:  "POST",
       headers: { "Content-Type": "application/json" },
       body:    JSON.stringify(item),
     });
-    if (!res.ok) {
-      const err = await res.json();
-      throw new Error(err.error || "Failed to add item");
-    }
+    if (!res.ok) { const e = await res.json(); throw new Error(e.error || "Failed to add item"); }
     await fetchInventory();
   }
 
   async function handleDelete(id) {
-    await fetch(`${API_URL}/inventory/${id}`, { method: "DELETE" });
+    await fetch(`${API_URL}?id=${id}`, { method: "DELETE" });
     await fetchInventory();
   }
-  
+
   const total      = inventory.length;
   const available  = inventory.filter((i) => i.status === "Available").length;
   const lowStock   = inventory.filter((i) => i.quantity > 0 && i.quantity <= LOW_STOCK_THRESHOLD).length;
@@ -287,31 +233,27 @@ export default function App() {
     <div className="app">
       <div className="app-header">
         <h1>Open Project — Inventory Dashboard</h1>
-        <p>Full-stack inventory management · React + Express · Modules 1–4</p>
+        <p>Full-stack inventory management · React + Vercel Serverless · Modules 1–4</p>
       </div>
 
       {error && <div className="error-banner">{error}</div>}
 
-      {/* ── Metrics (Module 4) ─────────────────────────────────────────────── */}
       <div className="metrics">
-        <MetricCard label="Total items"  value={total}      sub="" />
+        <MetricCard label="Total items"  value={total}      />
         <MetricCard label="Available"    value={available}  sub={`of ${total}`} />
         <MetricCard label="Low stock"    value={lowStock}   sub={`≤ ${LOW_STOCK_THRESHOLD} units`} />
         <MetricCard label="Out of stock" value={outOfStock} sub="qty = 0" />
         <MetricCard label="Categories"   value={categories} sub="unique" />
       </div>
 
-      {/* ── Add form (Module 3 — POST /inventory) ─────────────────────────── */}
       <AddItemForm onAdd={handleAdd} />
 
-      {/* ── Inventory list (Modules 1 & 3) ────────────────────────────────── */}
       {loading ? (
         <div className="loading">Loading inventory…</div>
       ) : (
         <InventoryTable items={inventory} onDelete={handleDelete} />
       )}
 
-      {/* ── Category chart (Module 4) ──────────────────────────────────────── */}
       {!loading && <CategoryChart items={inventory} />}
     </div>
   );
