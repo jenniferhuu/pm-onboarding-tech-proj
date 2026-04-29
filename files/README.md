@@ -1,4 +1,4 @@
-# Open Project — Inventory Dashboard
+# Open Project PM — Inventory Dashboard
 
 Full-stack inventory dashboard deployed entirely on Vercel.
 
