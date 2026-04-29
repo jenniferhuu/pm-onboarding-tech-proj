@@ -7,7 +7,7 @@ Full-stack inventory dashboard deployed entirely on Vercel.
 ```
 inventory-vercel/
 ├── api/
-│   └── inventory.js   ← serverless function (replaces Express backend)
+│   └── inventory.js   
 ├── src/
 │   ├── App.js
 │   ├── index.js
